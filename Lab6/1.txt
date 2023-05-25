@@ -1,0 +1,470 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include <string.h>
+
+typedef struct node
+{
+    char srn[13];
+    struct node*llink;
+    struct node*rlink;
+   
+}node_t;
+
+typedef struct tree
+{
+    node_t* root;
+}tree_t;
+
+void init(tree_t*pt)
+{
+    pt->root=NULL;
+   
+}
+
+void create(tree_t*pt,int n)
+{
+   
+    node_t*temp;
+    node_t*pres;
+    node_t*prev;
+   printf("Enter root node: ");
+    pt->root=(node_t*)malloc(sizeof(node_t));
+    scanf("%s",(pt->root->srn));
+    pt->root->llink=pt->root->rlink=NULL;
+       
+    do
+    {
+        printf("Enter node value: ");
+        temp=(node_t*)malloc(sizeof(node_t));
+        scanf("%s",(temp->srn));
+        temp->llink=temp->rlink=NULL;
+        prev=NULL;
+        pres=pt->root;
+       
+        while(pres!=NULL)
+        {  
+            prev=pres;
+            if(strcmp(temp->srn,pres->srn)<0)
+                pres=pres->llink;
+            else
+                pres=pres->rlink;
+        }
+        if(strcmp(temp->srn,prev->srn)<0)
+            prev->llink=temp;
+        else
+            prev->rlink=temp;
+         --n;
+    } while(n>0);
+   
+}
+
+void inorder_traversal(node_t*p)
+{
+    if(p!=NULL)
+    {
+       
+       
+        inorder_traversal(p->llink);
+        printf("%s\n",p->srn);
+        inorder_traversal(p->rlink);
+    }
+}
+
+
+  int search(node_t*p,char* ele)
+{
+    int found=0;
+    if(p!=NULL)
+    {
+       
+       
+        search(p->llink,ele);
+        if(strcmp(p->srn,ele)==0)
+        {
+
+            found=1;
+            return(found);
+        }
+        search(p->rlink,ele);
+    }
+    return(found);
+
+}
+
+int main()
+{  
+    tree_t t;
+    init(&t);
+    printf("Enter number of nodes: ");
+    int len;
+    scanf("%d",&len);
+    create(&t,len-1);
+    inorder_traversal(t.root);
+    printf("\n Enter srn to search for: ");
+    char ele[13];
+    scanf("%s",ele);
+    int res=search(t.root,ele);
+    if(res==1)
+        printf("\n %s is found \t",ele);
+    else
+        printf("\n Node not found");
+
+   return 0;
+   
+}
+
+/////////////////////////////////////////////////////////////
+at
+
+#include<stdio.h>
+typedef struct tree_node
+{
+    int info;
+    int used;
+}TREE;
+
+#define MAXNODES 50
+
+void init(TREE t[MAXNODES])
+{
+    for(int i=0;i<MAXNODES;i++)
+    t[i].used=0;
+}
+
+void create(TREE *bst)
+{
+    int ele, wish;
+    printf("Enter the root element\n");
+    scanf("%d",&bst[0].info);
+    bst[0].used=1;
+    do
+    {
+        printf("Enter an element\n");
+        scanf("%d",&ele);
+        int p=0;
+        while(p<MAXNODES && bst[p].used)
+        {
+            if(ele<bst[p].info)
+                p=2*p+1;
+            else
+                p=2*p+2;
+        }
+        if(p>=MAXNODES)
+            printf("Insertion not possible\n");
+        else
+        {
+            bst[p].info=ele;
+            bst[p].used=1;
+        }
+        printf("Do you wish to add another\n");
+        scanf("%d",&wish);
+    }while(wish);
+}
+void preorder(TREE* bst, int r)
+{
+    if(bst[r].used)
+    {
+        printf("%d ",bst[r].info);
+        preorder(bst,2*r+1);
+        preorder(bst,2*r+2);
+    }
+}
+
+int maxHeight(TREE* bst, int r)
+{
+    if (bst[r].used==0)
+        return 0;
+    else {
+        int lHeight = maxHeight(bst, 2*r+1);
+        int rHeight = maxHeight(bst, 2*r+2);
+ 
+        if (lHeight > rHeight)
+            return (lHeight + 1);
+        else
+            return (rHeight + 1);
+    }
+}
+
+int main()
+{
+    TREE bst[MAXNODES];
+    init(bst);
+    create(bst);
+    preorder(bst,0);
+    int n = maxHeight(bst,0);
+    printf("\nHeight of tree is %d and level of tree is %d\n", n-1, n);
+    return 0;
+}
+//////////////////////////////////////////////////////////////
+j
+
+#include<stdio.h>
+#include<stdlib.h>
+
+typedef struct node
+{
+    int key;
+    struct node*link;
+}node_t;
+
+typedef struct queue
+{
+    node_t*front;
+    node_t*rear;
+}queue_t;
+
+void init(queue_t*q)
+{
+    q->front=NULL;
+    q->rear=NULL;
+}
+
+node_t* create_node(int ele)
+{
+    node_t*temp;
+    temp=(node_t*)malloc(sizeof(node_t));
+    temp->key=ele;
+    temp->link=NULL;
+    return temp;
+}
+
+void enqueue(queue_t*q,int ele)
+{
+    node_t*temp=create_node(ele);
+    if(q->front==NULL)
+    {
+        q->front=temp;
+        q->rear=temp;
+        q->rear->link=q->front;
+    }
+    else
+    {
+        q->rear->link=temp;
+        q->rear=temp;
+        temp->link=q->front;
+    }
+}
+
+void dequeue(queue_t*q,int k)
+{
+    node_t*pres;
+    node_t*prev;
+    if(q->front==NULL)
+        printf("There are no people in queue.\n");
+    else
+    {
+        pres=q->front;
+        prev=NULL;
+        while(pres->link!=pres) 
+        {
+            int i=0;
+            while(i<k-1) 
+            {
+                prev=pres;
+                pres=pres->link;
+                i++;
+            }
+            prev->link=pres->link;
+            printf("%d has been killed.\n",pres->key);
+            free(pres);
+            pres=prev->link;
+        }
+        q->front=pres;
+        printf("Survivor: %d\n",pres->key);
+    }
+}
+
+int main()
+{
+    queue_t q;
+    init(&q);
+    int n,k;
+    printf("Enter the number of people:\n");
+    scanf("%d",&n);
+    printf("Enter k value:\n");
+    scanf("%d",&k);
+    for(int i=1;i<=n;i++)
+        enqueue(&q,i);
+    dequeue(&q,k);
+    return 0;
+}
+
+
+//////////////////////////////////////////////////////////////
+d
+
+#include<stdio.h>
+#include<stdlib.h>
+
+typedef struct deque
+{
+	int *a;
+	int front;
+	int rear;
+	int size;
+}deq_t;
+
+void init(deq_t *q)
+{
+	q->front=-1;
+	q->rear=-1;
+	q->a=(int*)malloc(sizeof(int)*q->size);	
+}
+
+int isEmpty(deq_t *q)
+{
+	return q->rear==-1;
+}
+
+int isFull(deq_t *q)
+{
+	return (q->rear+1)%q->size==q->front;
+}
+
+void disp(deq_t *q)
+{
+	if(isEmpty(q))
+	{
+		printf("Queue is empty\n\n");
+	}
+	else
+	{
+		int i=q->front;
+		while(i!=q->rear)
+		{
+			printf("%d ",q->a[i]);
+			i=(i+1)%q->size;
+			
+		}
+		printf("%d ",q->a[q->rear]);
+		printf("\n\n");
+	}
+}
+
+void enque_front(deq_t *q, int ele)
+{
+        if(isFull(q))
+	{
+		printf("Queue is Full\n\n");
+	}
+	else
+	{
+		if(isEmpty(q))
+		{
+			q->rear=0;
+			q->front=0;
+			q->a[0]=ele;
+		}
+		else
+		{
+			q->front=(q->front-1+q->size)%q->size;
+			q->a[q->front]=ele;
+		}
+	}
+}
+
+void enque_rear(deq_t *q, int ele)
+{
+        if(isFull(q))
+	{
+		printf("Queue is Full\n\n");
+	}
+	else
+	{
+		if(isEmpty(q))
+		{
+			q->rear=0;
+			q->front=0;
+			q->a[0]=ele;
+		}
+		else
+		{
+			q->rear=(q->rear+1)%q->size;
+			q->a[q->rear]=ele;
+		}
+	}
+}
+
+int deque_front(deq_t *q)
+{
+        int del_ele;
+	if(isEmpty(q))
+	{
+		printf("Queue is empty\n\n");
+		return -1;
+	}
+	else
+	{
+		del_ele=q->a[q->front];
+		if(q->rear==q->front)
+			init(q);
+		else
+			q->front=(q->front+1)%q->size;
+		return del_ele;
+	}
+}
+
+int deque_rear(deq_t *q)
+{
+        int del_ele;
+	if(isEmpty(q))
+	{
+		printf("Queue is empty\n\n");
+		return -1;
+	}
+	else
+	{
+		del_ele=q->a[q->rear];	
+		if(q->rear==q->front)
+			init(q);
+		else
+			q->rear=(q->rear-1+q->size)%q->size;
+		return del_ele;
+		
+	}
+}
+
+int main()
+{
+        deq_t q;
+        int ch, ele;
+        printf("Enter the size:\n");
+        scanf("%d",&q.size);
+        init(&q);
+        printf("Enter your choice\n1. Enqueue Front\n2. Enqueue Rear\n3. Dequeue Front\n4. Dequeue Rear\n5. Display\nor 0 to exit:\n");
+        scanf("%d", &ch);
+        while(ch)
+        {
+                switch(ch)
+                {
+                        case 1:
+                                printf("Enter element:\n");
+                                scanf("%d", &ele);
+                                enque_front(&q, ele);
+                                break;
+                        case 2:
+                                printf("Enter element:\n");
+                                scanf("%d", &ele);
+                                enque_rear(&q, ele);
+                                break;
+                        case 3:
+                                ele = deque_front(&q);
+                                printf("Element is %d\n", ele);
+                                break;
+                        case 4:
+                                ele= deque_rear(&q);
+                                printf("Element is %d\n", ele);
+                                break;
+                        case 5:
+                                disp(&q);
+                                break;
+                        default:
+                                printf("Invalid choice\n");
+                                break;
+                }
+                printf("Enter your choice\n1. Enqueue Front\n2. Enqueue Rear\n3. Dequeue Front\n4. Dequeue Rear\n5. Display\nor 0 to exit:\n");
+                scanf("%d", &ch);
+        }
+        return 0;
+}
+                              
